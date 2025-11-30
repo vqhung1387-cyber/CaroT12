@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "caro", "caro\caro.vcxproj", "{2F69644B-7629-48F6-99A9-C7B8D9BFFC3A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F69644B-7629-48F6-99A9-C7B8D9BFFC3A}.Debug|x64.ActiveCfg = Debug|x64
+		{2F69644B-7629-48F6-99A9-C7B8D9BFFC3A}.Debug|x64.Build.0 = Debug|x64
+		{2F69644B-7629-48F6-99A9-C7B8D9BFFC3A}.Debug|x86.ActiveCfg = Debug|Win32
+		{2F69644B-7629-48F6-99A9-C7B8D9BFFC3A}.Debug|x86.Build.0 = Debug|Win32
+		{2F69644B-7629-48F6-99A9-C7B8D9BFFC3A}.Release|x64.ActiveCfg = Release|x64
+		{2F69644B-7629-48F6-99A9-C7B8D9BFFC3A}.Release|x64.Build.0 = Release|x64
+		{2F69644B-7629-48F6-99A9-C7B8D9BFFC3A}.Release|x86.ActiveCfg = Release|Win32
+		{2F69644B-7629-48F6-99A9-C7B8D9BFFC3A}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CC535AAD-269B-4818-9344-2923A398C44C}
+	EndGlobalSection
+EndGlobal
