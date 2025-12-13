@@ -5,6 +5,7 @@ bool mainMusic = true;
 bool cSound = true;
 int scrollX = SCREEN_WIDTH;
 
+
 void renderText(string text, int x, int y, SDL_Color color) {
 	if (_font1 == NULL) return;
 
@@ -99,15 +100,15 @@ void DrawBoard() {
 void DrawMenu() {
 	for (int i = 0; i < 5; i++) {
 		renderRainbowText("Welcome to our game.", SCREEN_WIDTH / 2, 150);
-		renderGlitchText("CARO SDL2/C++", SCREEN_WIDTH / 2, 90, _font1);
+		renderGlitchText("TIC TAC TOE", SCREEN_WIDTH / 2, 90, _font1);
 	}
-	SDL_Color selectedColor = { 27, 4, 102, 255 }; // Xanh đậm
-	SDL_Color normalColor = { 60, 100, 223, 255 };     // Xanh Nhạt
+	SDL_Color selectedColor = { 255, 255, 255, 255 }; 
+	SDL_Color normalColor = { 224, 255, 255, 255 }; 
 	vector<string> menuList = { "PLAY", "LOAD", "ABOUT", "HELP","SETTINGS", "EXIT" };
 	for (int i = 0; i < menuList.size(); i++) {
 		if (menuSelection == i) {
 			for (int j = 0; j < 5; j++)
-				renderText(">> " + menuList[i] + " <<", SCREEN_WIDTH / 2, 240 + 80 * i, selectedColor, _font4);
+				renderText("* " + menuList[i] + " *", SCREEN_WIDTH / 2, 240 + 80 * i, selectedColor, _font4);
 		}
 		else {
 			for (int j = 0; j < 5; j++)
@@ -116,74 +117,76 @@ void DrawMenu() {
 	}
 }
 void renderAbout() {
-	SDL_Color textColor = { 101, 67, 33, 255 };
-	for (int i = 0; i < 15; i++) {
-		renderText("- VNUHCM - University of Science -", SCREEN_WIDTH / 2 + 10, 270, textColor, _font4);
-		renderText("Class: 25C10", SCREEN_WIDTH / 2 - 123, 310, textColor, _font3);
-		renderText("Mentor: Truong Toan Thinh", SCREEN_WIDTH / 2 - 51, 340, textColor, _font3);
-		renderText("Created by: Group 11", SCREEN_WIDTH / 2 - 77, 370, textColor, _font3);
-		renderText("25127055 - Vuong Quoc Hung", SCREEN_WIDTH / 2 - 20, 400, textColor, _font3);
-		renderText("25127132 - Bui Huu Tan Tai", SCREEN_WIDTH / 2 - 31, 430, textColor, _font3);
-		renderText("25127215 - Lam Yen Ngoc", SCREEN_WIDTH / 2 - 47, 460, textColor, _font3);
-		renderText("25127386 - Tran Nguyen Anh Khoa", SCREEN_WIDTH / 2 + 22, 490, textColor, _font3);
-		renderText("25127507 - Nguyen Quoc Thinh", SCREEN_WIDTH / 2 - 9, 520, textColor,_font3);
+	SDL_Color textColor = { 255, 255, 255, 255 };
+	SDL_Color titleColor = { 255, 250, 205, 255 };
+	for (int i = 0; i < 5; i++) {
+		renderText("- VNUHCM - University of Science -", SCREEN_WIDTH / 2 + 10,200, titleColor, _font4);
+		renderText("Class: 25C10", SCREEN_WIDTH / 2 - 123, 250, textColor, _font3);
+		renderText("Mentor: Truong Toan Thinh", SCREEN_WIDTH / 2 - 51, 280, textColor, _font3);
+		renderText("Created by: Group 11", SCREEN_WIDTH / 2 - 77, 310, textColor, _font3);
+		renderText("25127055 - Vuong Quoc Hung", SCREEN_WIDTH / 2 - 20, 340, textColor, _font3);
+		renderText("25127132 - Bui Huu Tan Tai", SCREEN_WIDTH / 2 - 31, 370, textColor, _font3);
+		renderText("25127215 - Lam Yen Ngoc", SCREEN_WIDTH / 2 - 47, 400, textColor, _font3);
+		renderText("25127386 - Tran Nguyen Anh Khoa", SCREEN_WIDTH / 2 + 22, 430, textColor, _font3);
+		renderText("25127507 - Nguyen Quoc Thinh", SCREEN_WIDTH / 2 - 9, 460, textColor,_font3);
 	}
 }
 void renderHelp() {
-	SDL_Color textColor = { 101, 67, 33, 255 };
-	for (int i = 0; i < 10; i++) {
-		renderText(" CONTROLS ", SCREEN_WIDTH / 2 + 10, 270, textColor, _font4);
-		renderText("- Use W, A, S, D to move P1, SPACE to place X.", 506, 310, textColor, _font3);
-		renderText("- Use UP, DOWN, RIGHT, LEFT to move P2, ENTER to place O.", SCREEN_WIDTH / 2 - 34, 340, textColor, _font3);
-		renderText("- Press L to save game (only in PvP).", 433, 370, textColor, _font3);
-		renderText("- Two players take turns marking X and O on a grid; the first", SCREEN_WIDTH / 2 - 24, 490, textColor, _font3);
-		renderText("to get 5 consecutive marks in a horizontal, vertical,or diagonal", SCREEN_WIDTH / 2 - 15, 520, textColor, _font3);
-		renderText(" row wins.", 180, 550, textColor, _font3);
-		renderText("- Press Esc to exit.", 284, 400, textColor, _font3);
-		renderText(" RULES ", SCREEN_WIDTH / 2 + 10, 450, textColor, _font4);
+	SDL_Color textColor = { 255, 255, 255, 255 };
+	SDL_Color titleColor = { 255, 250, 205, 255 };
+	for (int i = 0; i < 5; i++) {
+		renderText(" CONTROLS ", SCREEN_WIDTH / 2 + 10, 200, titleColor, _font4);
+		renderText("- Use W, A, S, D to move P1, SPACE to place X.", 506, 250, textColor, _font3);
+		renderText("- Use UP, DOWN, RIGHT, LEFT to move P2, ENTER to place O.", SCREEN_WIDTH / 2 - 34, 280, textColor, _font3);
+		renderText("- Press L to save game (only in PvP).", 433, 310, textColor, _font3);
+		renderText("- Two players take turns marking X and O on a grid; the first", SCREEN_WIDTH / 2 - 24, 380, textColor, _font3);
+		renderText("to get 5 consecutive marks in a horizontal, vertical,or diagonal", SCREEN_WIDTH / 2 - 15, 410, textColor, _font3);
+		renderText(" row wins.", 180, 440, textColor, _font3);
+		renderText("- Press Esc to exit.", SCREEN_WIDTH / 2, 460, textColor, _font3);
+		renderText(" RULES ", SCREEN_WIDTH / 2 + 10, 350, titleColor, _font4);
 
 
 	}
 }
+
+// Chinh vi tri ham setting lai
 void renderSetting() {
-	SDL_Color selectedColor = { 255, 0, 0, 255 };
-	SDL_Color textColor = { 101, 67, 33, 255 };
-	for (int i = 0; i < 15; i++) {
-		renderText("SETTINGS", SCREEN_WIDTH / 2 + 10, 270, textColor, _font4);
-	}
+	SDL_Color selectedColor = { 255, 250, 205, 255 };
+	SDL_Color textColor = { 255, 255, 255, 255 };
+
 	vector<string> settingList = { "Music","SFX" "Back" };
 	for (int i = 0; i < 5; i++) {
 		if (settingSelection == 0) {
 			if (mainMusic) {
-				renderText("Music: ON", SCREEN_WIDTH / 2 - 30, 310, selectedColor, _font3);
+				renderText("Music: ON", SCREEN_WIDTH / 2 - 30, 310, selectedColor, _font4);
 			}
 			else
-				renderText("Music: OFF", SCREEN_WIDTH / 2 - 35, 310, selectedColor, _font3);
+				renderText("Music: OFF", SCREEN_WIDTH / 2 - 35, 310, selectedColor, _font4);
 		}
 		else {
 			if (mainMusic) {
-				renderText("Music: ON", SCREEN_WIDTH / 2 - 30, 310, textColor, _font3);
+				renderText("Music: ON", SCREEN_WIDTH / 2 - 30, 310, textColor, _font4);
 			}
 			else
-				renderText("Music: OFF", SCREEN_WIDTH / 2 - 35, 310, textColor, _font3);
+				renderText("Music: OFF", SCREEN_WIDTH / 2 - 35, 310, textColor, _font4);
 		}
 		if (settingSelection == 1) {
 			if (cSound)
-				renderText("SFX: ON", SCREEN_WIDTH / 2 - 40, 340, selectedColor, _font3);
+				renderText("SFX: ON", SCREEN_WIDTH / 2 - 40, 340, selectedColor, _font4);
 			else
-				renderText("SFX: OFF", SCREEN_WIDTH / 2 - 45, 340, selectedColor, _font3);
+				renderText("SFX: OFF", SCREEN_WIDTH / 2 - 45, 340, selectedColor, _font4);
 		}
 		else {
 			if (cSound)
-				renderText("SFX: ON", SCREEN_WIDTH / 2 - 40, 340, textColor, _font3);
+				renderText("SFX: ON", SCREEN_WIDTH / 2 - 40, 340, textColor, _font4);
 			else
-				renderText("SFX: OFF", SCREEN_WIDTH / 2 - 45, 340, textColor, _font3);
+				renderText("SFX: OFF", SCREEN_WIDTH / 2 - 45, 340, textColor, _font4);
 		}
 		if (settingSelection == 2) {
-			renderText("Back", SCREEN_WIDTH / 2 - 50, 370, selectedColor, _font3);
+			renderText("Back", SCREEN_WIDTH / 2 - 50, 370, selectedColor, _font4);
 		}
 		else {
-			renderText("Back", SCREEN_WIDTH / 2 - 50, 370, textColor, _font3);
+			renderText("Back", SCREEN_WIDTH / 2 - 50, 370, textColor, _font4);
 		}
 		
 	}
@@ -371,6 +374,34 @@ void DrawNameInput() {
 	// 5. Hướng dẫn
 	for(int i = 0; i < 5; i++)
 		renderText("(Enter to Confirm - Esc to Cancel)", SCREEN_WIDTH / 2, 580, hintColor, _font4);
+}
+
+void initSnow() {
+	for (int i = 0; i < MAX_SNOW; i++) {
+		snow[i].x = rand() % SCREEN_WIDTH; // Vị trí X ngẫu nhiên
+		snow[i].y = rand() % SCREEN_HEIGHT * -1; // Bắt đầu từ phía trên màn hình
+		snow[i].speed = (rand() % 3 + 1);  // Tốc độ ngẫu nhiên từ 1 đến 3
+		snow[i].size = (rand() % 3 + 2);   // Kích thước ngẫu nhiên từ 2 đến 4 pixel
+	}
+}
+
+void renderSnowEffect() {
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 200); // Màu trắng hơi trong suốt
+
+	for (int i = 0; i < MAX_SNOW; i++) {
+		// 1. Cập nhật vị trí (Rơi xuống)
+		snow[i].y += snow[i].speed;
+
+		// Nếu rơi quá màn hình thì reset lại lên trên cùng
+		if (snow[i].y > SCREEN_HEIGHT) {
+			snow[i].y = rand() % 50 * -1; // Reset vị trí Y trên cùng
+			snow[i].x = rand() % SCREEN_WIDTH; // Random lại vị trí X mới
+		}
+
+		// 2. Vẽ bông tuyết
+		SDL_Rect snowRect = { (int)snow[i].x, (int)snow[i].y, snow[i].size, snow[i].size };
+		SDL_RenderFillRect(renderer, &snowRect);
+	}
 }
 
 

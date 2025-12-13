@@ -18,6 +18,7 @@ int turnTime = 15;
 Uint32 lastTime = 0;
 vector<string> saveFiles;
 int loadSelection = 0;
+SnowFlake snow[MAX_SNOW];
 void initBoard() {
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {

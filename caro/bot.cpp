@@ -318,7 +318,6 @@ void PVE_VeryHard_Move() {
             }
         }
     }
-
     if (moveR != -1) placeMove(moveR, moveC);
     else PVE_Easy_Move();
 }

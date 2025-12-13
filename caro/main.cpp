@@ -45,7 +45,7 @@ bool init() {
 }
 
 bool loadMedia() {
-	_font1 = TTF_OpenFont("font/ARCADE.ttf", 150);
+	_font1 = TTF_OpenFont("font/ARCADE.ttf", 100);
 	if (_font1 == NULL) {
 		cout << "Khong load duoc font! Thu kiem tra lai duong dan." << TTF_GetError() << endl;
 		return false;
@@ -65,12 +65,12 @@ bool loadMedia() {
 		cout << "Khong load duoc font! Thu kiem tra lai duong dan." << TTF_GetError() << endl;
 		return false;
 	}
-	GameMusic = Mix_LoadMUS("sound/MusicMenu2.mp3");
+	GameMusic = Mix_LoadMUS("sound/MenuMusic_2.mp3");
 	if (GameMusic == NULL) {
 		cout << "Khong load duoc nhac game! Thu kiem tra lai duong dan. " << Mix_GetError() << endl;
 		return false;
 	}
-	ClickSound = Mix_LoadWAV("sound/click.mp3");
+	ClickSound = Mix_LoadWAV("sound/click_4.wav");
 	if (ClickSound == NULL) {
 		cout << "Khong the load duoc tieng click game!" << Mix_GetError() << endl;
 		return false;
@@ -80,27 +80,27 @@ bool loadMedia() {
 		cout << "Khong the load tieng win!" << Mix_GetError() << endl;
 		return false;
 	}
-	Menu = loadTexture("img/Menu.jpg");
+	Menu = loadTexture("img/Menu_3.png");
 	if (Menu == NULL) {
 		cout << "tai Menu that bai!" << IMG_GetError() << endl;
 		return false;
 	}
-	Help = loadTexture("img/Help.jpg");
+	Help = loadTexture("img/Help_2.png");
 	if (Help == NULL) {
 		cout << "Tai Help that bai!" << IMG_GetError() << endl;
 		return false;
 	}
-	About = loadTexture("img/About.jpg");
+	About = loadTexture("img/About.png");
 	if (About == NULL) {
 		cout << "Tai About that bai!" << IMG_GetError() << endl;
 		return false;
 	}
-	Settings = loadTexture("img/Settings.jpg");
+	Settings = loadTexture("img/Settings.png");
 	if (Settings == NULL) {
 		cout << "Tai Settings that bai!" << IMG_GetError() << endl;
 		return false;
 	}
-	PvP = loadTexture("img/PvPVer2.png");
+	PvP = loadTexture("img/PvP.png");
 	if (PvP == NULL) {
 		cout << "Tai PvP that bai!" << IMG_GetError() << endl;
 		return false;
@@ -110,7 +110,7 @@ bool loadMedia() {
 		cout << "Tai Load that bai!" << IMG_GetError() << endl;
 		return false;
 	}
-	Hello = loadTexture("img/HelloVer2.png");
+	Hello = loadTexture("img/Hello.png");
 	if (Hello == NULL) {
 		cout << "Tai Hello That bai!" << IMG_GetError() << endl;
 		return false;
@@ -175,7 +175,7 @@ int main(int argc, char* args[]) {
 	if (!loadMedia()) {
 		cout << "Load media that bai! (Kiem tra font)" << endl;
 	}
-
+	initSnow();
 	initBoard();
 	SDL_Event e;
 
@@ -384,17 +384,23 @@ int main(int argc, char* args[]) {
 						break;
 					case SDLK_RETURN:
 					case SDLK_SPACE:
-						string selectedFile = saveFiles[loadSelection];
-						if (LoadGame(selectedFile)) {
-							winner = 0;
+						if(saveFiles.size() != 0)
+						{
+							string selectedFile = saveFiles[loadSelection];
+							if (LoadGame(selectedFile)) {
+								winner = 0;
 
-							lastTime = SDL_GetTicks();
+								lastTime = SDL_GetTicks();
+							}
+							else {
+								if (e.key.keysym.sym == SDLK_ESCAPE)
+									currentState = STATE_LOAD;
+							}
+							break;
 						}
 						else {
-							if (e.key.keysym.sym == SDLK_ESCAPE)
-								currentState = STATE_LOAD;
+							currentState = STATE_MENU;
 						}
-						break;
 					}
 				}
 				// TH5: HELP
@@ -633,6 +639,7 @@ int main(int argc, char* args[]) {
 
 		if (currentState == STATE_MENU) {
 			DrawMenu();
+			renderSnowEffect();
 		}
 		else if (currentState == STATE_PvP || currentState == STATE_PvE_easy || currentState == STATE_PvE_hard) {
 			DrawBoard();

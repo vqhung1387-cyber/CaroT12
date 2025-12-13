@@ -74,6 +74,16 @@ void updateTimer();
 void scanSaveFiles();
 
 // --- VIEW ---
+struct SnowFlake {
+	float x, y;     
+	float speed;    
+	int size;   
+};
+
+#define MAX_SNOW 100
+extern SnowFlake snow[MAX_SNOW];
+void renderSnowEffect();
+void initSnow();
 void renderText(string text, int x, int y, SDL_Color color);
 void renderText(string text, int x, int y, SDL_Color color, TTF_Font* font);
 void renderText(string text, int x, int y, SDL_Color color, TTF_Font* font, float scale);
