@@ -141,26 +141,40 @@ void renderFloatingText(string text, int x, int y, SDL_Color color, TTF_Font* fo
 	renderText(text, x, y + offset, color, font);
 }
 void renderRainbowText(string text, int x, int y) {
-	double time = SDL_GetTicks() / 500.0;
+	// --- HIỆU ỨNG MỚI: COZY BREATHING (NHỊP THỞ ẤM ÁP) ---
 
-	// Tạo màu thay đổi theo thời gian (Sin wave cho từng kênh màu)
-	Uint8 r = (sin(time) + 1) * 127;
-	Uint8 g = (sin(time + 2) + 1) * 127;    // Lệch pha đi chút
-	Uint8 b = (sin(time + 4) + 1) * 127;    // Lệch pha tiếp
+	double time = SDL_GetTicks() / 1000.0; // Nhịp chậm hơn (1000ms)
 
-	SDL_Color rainbow = { r, g, b, 255 };
-	renderText(text, x, y, rainbow, _font2);
+	// Chuyển màu mượt mà giữa Vàng Kim (Gold) và Trắng Kem (Cream)
+	// Gold: {255, 215, 0}
+	// Cream: {255, 255, 240}
+
+	// Ta chỉ cần thay đổi kênh Green (G) và Blue (B)
+	// Kênh R giữ nguyên 255 (Max đỏ)
+
+	// Công thức nội suy màu:
+	double blend = (sin(time) + 1.0) / 2.0; // Giá trị từ 0.0 đến 1.0
+
+	Uint8 g = 215 + (int)(blend * (255 - 215)); // Chạy từ 215 -> 255
+	Uint8 b = 0 + (int)(blend * 240);         // Chạy từ 0 -> 240
+
+	SDL_Color cozyColor = { 255, g, b, 255 };
+
+	// Dùng font nhỏ hơn một chút hoặc font mặc định (_font2)
+	renderText(text, x, y, cozyColor, _font2);
 }
 void renderRainbowText(string text, int x, int y, TTF_Font* font) {
 	double time = SDL_GetTicks() / 500.0;
 
-	// Tạo màu thay đổi theo thời gian (Sin wave cho từng kênh màu)
-	Uint8 r = (sin(time) + 1) * 127;
-	Uint8 g = (sin(time + 2) + 1) * 127;    // Lệch pha đi chút
-	Uint8 b = (sin(time + 4) + 1) * 127;    // Lệch pha tiếp
+	// Chuyển từ Trắng (255,255,255) sang Xanh (135,206,250)
+	// Kênh R giảm từ 255 xuống thấp, G giảm ít, B giữ nguyên cao
 
-	SDL_Color rainbow = { r, g, b, 255 };
-	renderText(text, x, y, rainbow, font);
+	Uint8 val = (sin(time) + 1) * 60 + 135; // Dao động khoảng 135 -> 255
+
+	SDL_Color frozenColor = { val, 255, 255, 255 };
+	// Mẹo: Để R = val sẽ tạo ra màu Cyan nhạt lấp lánh sang trắng
+
+	renderText(text, x, y, frozenColor, _font2);
 }
 void renderScrollingText(string text, int y, SDL_Color color) {
 	// Mỗi khung hình trừ đi 2 pixel (Tốc độ chạy)
@@ -196,21 +210,25 @@ void renderPulsingText(string text, int x, int y, SDL_Color color) {
 }
 	// Hiệu ứng nhiễu sóng.
 void renderGlitchText(string text, int x, int y, TTF_Font* font) {
-	// Tạo độ rung ngẫu nhiên
-	int shakeX = (rand() % 5) - 2; // Rung từ -2 đến 2 pixel
-	int shakeY = (rand() % 5) - 2;
+	// --- HIỆU ỨNG MỚI: FROZEN FLOAT (BĂNG TRÔI) ---
 
-	// 1. Vẽ lớp màu ĐỎ (Lệch sang trái)
-	SDL_Color red = { 255, 0, 0, 200 }; // Alpha 200 để hơi trong suốt
-	renderText(text, x - 4 + shakeX, y + shakeY, red, font);
+	// 1. Tạo chuyển động nổi lên xuống nhẹ nhàng (Floating)
+	double time = SDL_GetTicks() / 500.0;
+	int offsetY = sin(time) * 5; // Dao động lên xuống 5 pixel
 
-	// 2. Vẽ lớp màu XANH CYAN (Lệch sang phải)
-	SDL_Color cyan = { 0, 255, 255, 200 };
-	renderText(text, x + 4 + shakeX, y + shakeY, cyan, font);
+	// 2. Vẽ bóng đổ màu Xanh Băng (Ice Blue) để tạo độ dày
+	// Bóng đổ lệch xuống dưới một chút và không di chuyển (hoặc di chuyển cùng)
+	// Ở đây ta cho bóng di chuyển cùng để chữ trông như khối băng
+	SDL_Color iceShadow = { 50, 100, 200, 255 }; // Xanh dương nhạt
+	renderText(text, x + 4, y + offsetY + 4, iceShadow, font);
 
-	// 3. Vẽ lớp CHÍNH (Màu trắng hoặc đen tùy nền)
+	// 3. Vẽ viền trắng mờ (Optional - tạo hào quang)
+	SDL_Color glow = { 200, 255, 255, 100 };
+	renderText(text, x, y + offsetY, glow, font);
+
+	// 4. Vẽ lớp CHÍNH màu TRẮNG TUYẾT (Snow White)
 	SDL_Color white = { 255, 255, 255, 255 };
-	renderText(text, x, y, white, font);
+	renderText(text, x, y + offsetY, white, font);
 }
 	// Hiệu ứng rung lắc.
 void renderShakingText(string text, int x, int y, SDL_Color color, TTF_Font* font) {
