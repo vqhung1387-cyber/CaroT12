@@ -80,12 +80,12 @@ bool loadMedia() {
 		cout << "Khong the load tieng win!" << Mix_GetError() << endl;
 		return false;
 	}
-	Menu = loadTexture("img/Menu_3.png");
+	Menu = loadTexture("img/Menu.png");
 	if (Menu == NULL) {
 		cout << "tai Menu that bai!" << IMG_GetError() << endl;
 		return false;
 	}
-	Help = loadTexture("img/Help_2.png");
+	Help = loadTexture("img/Help.png");
 	if (Help == NULL) {
 		cout << "Tai Help that bai!" << IMG_GetError() << endl;
 		return false;
@@ -105,7 +105,7 @@ bool loadMedia() {
 		cout << "Tai PvP that bai!" << IMG_GetError() << endl;
 		return false;
 	}
-	Load = loadTexture("img/Load.jpg");
+	Load = loadTexture("img/Load.png");
 	if (Load == NULL) {
 		cout << "Tai Load that bai!" << IMG_GetError() << endl;
 		return false;
@@ -115,17 +115,17 @@ bool loadMedia() {
 		cout << "Tai Hello That bai!" << IMG_GetError() << endl;
 		return false;
 	}
-	Save = loadTexture("img/Save.jpg");
+	Save = loadTexture("img/Save.png");
 	if (Save == NULL) {
 		cout << "Tai Save that bai!" << IMG_GetError() << endl;
 		return false;
 	}
-	Pause = loadTexture("img/Pause.jpg");
+	Pause = loadTexture("img/Pause.png");
 	if (Pause == NULL) {
 		cout << "Tai Pause that bai!" << IMG_GetError() << endl;
 		return false;
 	}
-	PlayGame = loadTexture("img/NewGame.jpg");
+	PlayGame = loadTexture("img/GameMode.png");
 	if (PlayGame == NULL) {
 		cout << "Khong the tai PlayGame!" << IMG_GetError() << endl;
 		return false;
@@ -441,11 +441,17 @@ int main(int argc, char* args[]) {
 								cSound = true;
 						}
 						else if (settingSelection == 2)
-							if (!isPause)
-								currentState = STATE_MENU;
-							else
-								currentState = STATE_PAUSE;
+							if (effects) effects = false;
+							else effects = true;
+						break;
+					case SDLK_ESCAPE:
+						if (isPause)
+							currentState = STATE_PAUSE;
+						else
+							currentState = STATE_MENU;
+						break;
 					}
+
 				}
 				// TH7: HELLO
 				else if (currentState == STATE_HELLO) {
@@ -498,11 +504,11 @@ int main(int argc, char* args[]) {
 					case SDLK_UP: case SDLK_w:
 						playGameSelection--;
 						if (playGameSelection < 0)
-							playGameSelection = 2;
+							playGameSelection = 3;
 						break;
 					case SDLK_DOWN: case SDLK_s:
 						playGameSelection++;
-						if (playGameSelection > 2)
+						if (playGameSelection > 3)
 							playGameSelection = 0;
 						break;
 					case SDLK_RETURN:
@@ -513,9 +519,24 @@ int main(int argc, char* args[]) {
 							winner = 0;
 						}
 						else if (playGameSelection == 1)
+						{
 							currentState = STATE_PvE_easy;
+							initBoard();
+							winner = 0;
+						}
+							
 						else if (playGameSelection == 2)
+						{
+							currentState = STATE_PvE_medium;
+							initBoard();
+							winner = 0;
+						}
+						else if (playGameSelection == 3)
+						{
 							currentState = STATE_PvE_hard;
+							initBoard();
+							winner = 0;
+						}
 						break;
 					case SDLK_ESCAPE:
 						currentState = STATE_MENU;
@@ -523,7 +544,7 @@ int main(int argc, char* args[]) {
 					}
 				}
 				// TH11: PvE
-				else if (currentState == STATE_PvE_easy || currentState == STATE_PvE_hard) {
+				else if (currentState == STATE_PvE_easy || currentState == STATE_PvE_hard || currentState == STATE_PvE_medium) {
 					if (winner == 0) {
 						if (e.key.keysym.sym == SDLK_ESCAPE)
 							currentState = STATE_PAUSE;
@@ -577,6 +598,8 @@ int main(int argc, char* args[]) {
 							if (playGameSelection == 1)
 								currentState = STATE_PvE_easy;
 							else if (playGameSelection == 2)
+								currentState = STATE_PvE_medium;
+							else if (playGameSelection == 3)
 								currentState = STATE_PvE_hard;
 							if (winner == 1) {
 								countWinP1++;
@@ -600,16 +623,16 @@ int main(int argc, char* args[]) {
 		}
 		
 		updateTimer();
-		if (winner == 0 && currentPlayer == 2 && (currentState == STATE_PvE_easy || currentState == STATE_PvE_hard)) {
-
-			// Delay 500ms cho giống người đang suy nghĩ
-			SDL_Delay(500);
+		if (winner == 0 && currentPlayer == 2 && (currentState == STATE_PvE_easy || currentState == STATE_PvE_hard || currentState == STATE_PvE_medium)) {
 
 			if (currentState == STATE_PvE_easy) {
 				PVE_Easy_Move(); // Gọi Bot Dễ
 			}
-			else {
+			else if(currentState == STATE_PvE_medium) {
 				PVE_Hard_Move(); // Gọi Bot Khó
+			}
+			else {
+				PVE_VeryHard_Move();
 			}
 
 			int res = checkWin(lastMoveX, lastMoveY);
@@ -637,12 +660,15 @@ int main(int argc, char* args[]) {
 		}
 		DrawBackGround();
 
+		if(effects)
+			renderSnowEffect();
+
 		//Vẽ nền, chữ
 		if (currentState == STATE_MENU) {
 			DrawMenu();
-			renderSnowEffect();
+			
 		}
-		else if (currentState == STATE_PvP || currentState == STATE_PvE_easy || currentState == STATE_PvE_hard) {
+		else if (currentState == STATE_PvP || currentState == STATE_PvE_easy || currentState == STATE_PvE_hard || currentState == STATE_PvE_medium) {
 			DrawBoard();
 			DrawUI();
 			DrawXO();
@@ -653,6 +679,7 @@ int main(int argc, char* args[]) {
 			renderAbout();
 		}
 		else if (currentState == STATE_HELP) {
+			renderSnowEffect();
 			renderHelp();
 		}
 		else if (currentState == STATE_SETTING) {
