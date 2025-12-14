@@ -139,7 +139,7 @@ void renderHelp() {
 		renderText(" CONTROLS ", SCREEN_WIDTH / 2, 200, titleColor, _font4);
 		renderText("- Use W, A, S, D to move P1, SPACE to place X.", 506, 250, textColor, _font3);
 		renderText("- Use UP, DOWN, RIGHT, LEFT to move P2, ENTER to place O.", SCREEN_WIDTH / 2 - 34, 280, textColor, _font3);
-		renderText("- Press L to save game (only in PvP).", 433, 310, textColor, _font3);
+		renderText("- Press L to save game.", 320, 310, textColor, _font3);
 		renderText("- Two players take turns marking X and O on a grid; the first", SCREEN_WIDTH / 2 - 24, 380, textColor, _font3);
 		renderText("to get 5 consecutive marks in a horizontal, vertical,or diagonal", SCREEN_WIDTH / 2 - 15, 410, textColor, _font3);
 		renderText(" row wins.", 180, 440, textColor, _font3);

@@ -201,11 +201,11 @@ void renderGlitchText(string text, int x, int y, TTF_Font* font) {
 	int offsetY = sin(time) * 5;
 
 	// 1. Bóng đổ màu TRẮNG TUYẾT (Lệch xuống dưới 3px)
-	SDL_Color snowShadow = { 240, 255, 255, 255 };
+	SDL_Color snowShadow = { 255, 255, 255, 255 };
 	renderText(text, x + 3, y + offsetY + 3, snowShadow, font);
 
 	// 2. Chữ chính màu ĐỎ NOEL (Santa Red)
-	SDL_Color santaRed = { 220, 20, 60, 255 };
+	SDL_Color santaRed = { 255, 255, 255, 255 };
 	renderText(text, x, y + offsetY, santaRed, font);
 }
 	// Hiệu ứng rung lắc.

@@ -678,8 +678,7 @@ int main(int argc, char* args[]) {
 		else if (currentState == STATE_ABOUT) {
 			renderAbout();
 		}
-		else if (currentState == STATE_HELP) {
-			renderSnowEffect();
+		else if (currentState == STATE_HELP) {	
 			renderHelp();
 		}
 		else if (currentState == STATE_SETTING) {

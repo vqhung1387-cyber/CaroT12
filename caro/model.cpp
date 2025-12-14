@@ -209,7 +209,6 @@ void scanSaveFiles() {
 }
 
 void deletePFile(string filename) {
-	S
 	string fullPath = filename + ".txt";
 
 	try {
