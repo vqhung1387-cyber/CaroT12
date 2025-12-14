@@ -32,6 +32,7 @@ enum GameState {
 	STATE_PAUSE,
 	STATE_PvP,
 	STATE_PvE_easy,
+	STATE_PvE_medium,
 	STATE_PvE_hard
 };
 // --- GLOBAL VARIABLES ---
@@ -59,6 +60,7 @@ extern string inputText;
 extern int scrollX;
 extern int turnTime;
 extern Uint32 lastTime;
+extern bool effects;
 
 extern vector<string> saveFiles;
 extern int loadSelection;
@@ -72,6 +74,7 @@ void SaveGame(string pfile);
 bool LoadGame(string pfile);
 void updateTimer();
 void scanSaveFiles();
+void deletePFile(string filename);
 
 // --- VIEW ---
 struct SnowFlake {
@@ -105,6 +108,7 @@ SDL_Texture* createTextTexture(string text, SDL_Color color);
 // --- BOT ---
 void PVE_Easy_Move(); // Hàm bot dễ
 void PVE_Hard_Move(); // Hàm bot khó
+void PVE_VeryHard_Move();
 // --- MAIN ---
 bool init();
 bool loadMedia();

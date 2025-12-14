@@ -19,6 +19,8 @@ Uint32 lastTime = 0;
 vector<string> saveFiles;
 int loadSelection = 0;
 SnowFlake snow[MAX_SNOW];
+bool effects = true;
+
 void initBoard() {
 	for (int i = 0; i < BOARD_SIZE; i++) {
 		for (int j = 0; j < BOARD_SIZE; j++) {
@@ -152,7 +154,8 @@ bool LoadGame(string filename) {
 		file >> saveMode;
 		if (saveMode == 0) currentState = STATE_PvP;
 		else if (saveMode == 1) currentState = STATE_PvE_easy;
-		else if (saveMode == 2) currentState = STATE_PvE_hard;
+		else if (saveMode == 2) currentState = STATE_PvE_medium;
+		else if (saveMode == 3) currentState = STATE_PvE_hard;
 		file >> currentPlayer;
 		file >> countWinP1 >> countWinP2;
 		file >> countMoveP1 >> countMoveP2;
@@ -202,6 +205,21 @@ void scanSaveFiles() {
 		if (entry.path().extension() == ".txt") {
 			saveFiles.push_back(entry.path().stem().string());
 		}
+	}
+}
+
+void deletePFile(string filename) {
+	S
+	string fullPath = filename + ".txt";
+
+	try {
+		if (filesystem::exists(fullPath)) {
+			filesystem::remove(fullPath);
+			cout << "Da xoa file: " << fullPath << endl;
+		}
+	}
+	catch (const filesystem::filesystem_error& err) {
+		cout << "Loi xoa file: " << err.what() << endl;
 	}
 }
 

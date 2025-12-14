@@ -99,20 +99,20 @@ void DrawBoard() {
 }
 void DrawMenu() {
 	for (int i = 0; i < 5; i++) {
-		renderRainbowText("Welcome to our game.", SCREEN_WIDTH / 2, 150);
-		renderGlitchText("TIC TAC TOE", SCREEN_WIDTH / 2, 90, _font1);
+		renderRainbowText("MERRY CHRISTMAS!", SCREEN_WIDTH / 2, 150);
+		renderGlitchText("- TIC TAC TOE -", SCREEN_WIDTH / 2, 90, _font1);
 	}
-	SDL_Color selectedColor = { 255, 255, 255, 255 }; 
-	SDL_Color normalColor = { 224, 255, 255, 255 }; 
+	SDL_Color selectedColor = { 255, 250, 205, 255 };
+	SDL_Color normalColor = { 255, 255, 255, 255 }; 
 	vector<string> menuList = { "PLAY", "LOAD", "ABOUT", "HELP","SETTINGS", "EXIT" };
 	for (int i = 0; i < menuList.size(); i++) {
 		if (menuSelection == i) {
 			for (int j = 0; j < 5; j++)
-				renderText("* " + menuList[i] + " *", SCREEN_WIDTH / 2, 240 + 80 * i, selectedColor, _font4);
+				renderText("* " + menuList[i] + " *", SCREEN_WIDTH / 2 + 2, 232 + 70 * i, selectedColor, _font4);
 		}
 		else {
 			for (int j = 0; j < 5; j++)
-				renderText(menuList[i], SCREEN_WIDTH / 2 , 240 + 80 * i, normalColor, _font4);
+				renderText(menuList[i], SCREEN_WIDTH / 2 , 230 + 70 * i, normalColor, _font4);
 		}
 	}
 }
@@ -126,35 +126,35 @@ void renderAbout() {
 		renderText("Created by: Group 11", SCREEN_WIDTH / 2 - 81, 310, textColor, _font3);
 		renderText("25127055 - Vuong Quoc Hung", SCREEN_WIDTH / 2 - 20, 340, textColor, _font3);
 		renderText("25127132 - Bui Huu Tan Tai", SCREEN_WIDTH / 2 - 31, 370, textColor, _font3);
-		renderText("25127215 - Lam Yen Ngoc", SCREEN_WIDTH / 2 - 47, 410, textColor, _font3);
-		renderText("25127386 - Tran Nguyen Anh Khoa", SCREEN_WIDTH / 2 + 22, 440, textColor, _font3);
-		renderText("25127507 - Nguyen Quoc Thinh", SCREEN_WIDTH / 2 - 9, 470, textColor,_font3);
+		renderText("25127215 - Lam Yen Ngoc", SCREEN_WIDTH / 2 - 47, 400, textColor, _font3);
+		renderText("25127386 - Tran Nguyen Anh Khoa", SCREEN_WIDTH / 2 + 22, 430, textColor, _font3);
+		renderText("25127507 - Nguyen Quoc Thinh", SCREEN_WIDTH / 2 - 9, 460, textColor,_font3);
+		renderText("  PRESS ESC/SPACE/ENTER TO EXIT  ", SCREEN_WIDTH / 2, 500, titleColor, _font3);
 	}
 }
 void renderHelp() {
 	SDL_Color textColor = { 255, 255, 255, 255 };
 	SDL_Color titleColor = { 255, 250, 205, 255 };
 	for (int i = 0; i < 5; i++) {
-		renderText(" CONTROLS ", SCREEN_WIDTH / 2 + 10, 200, titleColor, _font4);
+		renderText(" CONTROLS ", SCREEN_WIDTH / 2, 200, titleColor, _font4);
 		renderText("- Use W, A, S, D to move P1, SPACE to place X.", 506, 250, textColor, _font3);
 		renderText("- Use UP, DOWN, RIGHT, LEFT to move P2, ENTER to place O.", SCREEN_WIDTH / 2 - 34, 280, textColor, _font3);
 		renderText("- Press L to save game (only in PvP).", 433, 310, textColor, _font3);
 		renderText("- Two players take turns marking X and O on a grid; the first", SCREEN_WIDTH / 2 - 24, 380, textColor, _font3);
 		renderText("to get 5 consecutive marks in a horizontal, vertical,or diagonal", SCREEN_WIDTH / 2 - 15, 410, textColor, _font3);
 		renderText(" row wins.", 180, 440, textColor, _font3);
-		renderText("- Press Esc to exit.", SCREEN_WIDTH / 2, 460, textColor, _font3);
-		renderText(" RULES ", SCREEN_WIDTH / 2 + 10, 350, titleColor, _font4);
+		renderText("  PRESS ESC/SPACE/ENTER TO EXIT  ", SCREEN_WIDTH / 2, 480, titleColor, _font3);
+		renderText(" RULES ", SCREEN_WIDTH / 2, 350, titleColor, _font4);
 
 
 	}
 }
 
-// Chinh vi tri ham setting lai
 void renderSetting() {
 	SDL_Color selectedColor = { 255, 250, 205, 255 };
 	SDL_Color textColor = { 255, 255, 255, 255 };
 
-	vector<string> settingList = { "Music","SFX" "Back" };
+	vector<string> settingList = { "Music","SFX" "Effects" };
 	for (int i = 0; i < 5; i++) {
 		if (settingSelection == 0) {
 			if (mainMusic) {
@@ -183,50 +183,61 @@ void renderSetting() {
 				renderText("SFX: OFF", SCREEN_WIDTH / 2 - 45, 340, textColor, _font4);
 		}
 		if (settingSelection == 2) {
-			renderText("Back", SCREEN_WIDTH / 2 - 50, 370, selectedColor, _font4);
+			if(effects)
+				renderText("Effects: ON", SCREEN_WIDTH / 2 - 50, 370, selectedColor, _font4);
+			else
+				renderText("Effects: OFF", SCREEN_WIDTH / 2 - 50, 370, selectedColor, _font4);	
 		}
 		else {
-			renderText("Back", SCREEN_WIDTH / 2 - 50, 370, textColor, _font4);
+			if (effects)
+				renderText("Effects: ON", SCREEN_WIDTH / 2 - 50, 370, textColor, _font4);
+			else
+				renderText("Effects: OFF", SCREEN_WIDTH / 2 - 50, 370, textColor, _font4);
 		}
 		
 	}
 }
 void renderLoad() {
-	SDL_Color selectedColor = { 255, 0, 0, 255 };
-	SDL_Color textColor = { 101, 67, 33, 255 };
+	SDL_Color textColor = { 255, 255, 255, 255 };
+	SDL_Color titleColor = { 255, 250, 205, 255 };
 	if (saveFiles.empty()) {
-		renderText("No save files found!", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, textColor, _font3);
+		renderText("No save files found!", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, titleColor, _font3);
 	}
 	else {
-		int startY = 300;
+		for(int i = 0; i < 5; i++)
+			renderText("List of saves: ", SCREEN_WIDTH / 2, 200, titleColor, _font4);
+		int startY = 250;
 		for (int i = 0; i < saveFiles.size(); i++) {
 			SDL_Color color;
 			string textToShow;
 
 			if (i == loadSelection) {
-				color = selectedColor;
-				textToShow = ">> " + saveFiles[i] + " <<";
+				color = titleColor;
+				textToShow = "* " + saveFiles[i] + " *";
+				for (int j = 0; j < 5; j++)
+					renderText(textToShow, SCREEN_WIDTH / 2 + 2, startY + 2 + (i * 50), color, _font3);
 			}
 			else {
 				color = textColor;
 				textToShow = saveFiles[i];
+				for (int j = 0; j < 5; j++)
+					renderText(textToShow, SCREEN_WIDTH / 2, startY + (i * 50), color, _font3);
 			}
-			renderText(textToShow, SCREEN_WIDTH / 2, startY + (i * 50), color, _font3);
 		}
 	}
 
 	// 4. Hướng dẫn
-	renderText("UP/DOWN: Select - ENTER: Load - ESC: Back", SCREEN_WIDTH / 2, SCREEN_HEIGHT - 150, { 150, 150, 150, 255 }, _font4);
+	for(int i = 0; i < 5; i++)
+		renderText("UP/DOWN: Select, ENTER: Load, ESC: Back", SCREEN_WIDTH / 2, 480, titleColor, _font3);
 }
 void renderHello() {
-	SDL_Color tcolor = { 0,0,0,255 };
+	SDL_Color tcolor = {255,255,255,255 };
 	for (int i = 0; i < 5; i++)
 		renderFloatingText("Press any keys to continue!", SCREEN_WIDTH / 2, 555, tcolor, _font4);
-	renderScrollingText("Helloooooo !!!!!!!!!!!", 50, tcolor);
 }
 void DrawXO() {
-	SDL_Color colorX = { 60, 180, 170, 255 }; 
-	SDL_Color colorO = { 230, 100, 80, 255 }; 
+	SDL_Color colorX = { 255, 69, 69, 255 };
+	SDL_Color colorO = { 50, 205, 50, 255 };
 
 	for (int r = 0; r < BOARD_SIZE; r++) {
 		for (int c = 0; c < BOARD_SIZE; c++) {
@@ -255,7 +266,7 @@ void DrawXO() {
 
 	// 3. VẼ CON TRỎ BÀN PHÍM (Cursor)
 	// Chỉ vẽ khi đang chơi game
-	if (currentState == STATE_PvP || currentState == STATE_PvE_easy || currentState == STATE_PvE_hard) {
+	if (currentState == STATE_PvP || currentState == STATE_PvE_easy || currentState == STATE_PvE_hard || currentState == STATE_PvE_medium) {
 		SDL_Rect cursorRect = { LEFT + cursorCol * CELLSIZE, TOP + cursorRow * CELLSIZE, CELLSIZE, CELLSIZE };
 
 		// Vẽ màu Xám đậm để làm con trỏ
@@ -269,23 +280,24 @@ void DrawXO() {
 	}
 }
 void DrawUI() {
+	SDL_Color colorX = { 255, 69, 69, 255 };
+	SDL_Color colorO = { 50, 205, 50, 255 };
 	SDL_Color white = { 255,255,255,255 };
-	SDL_Color den = { 0,0,0,255 };
 	// UI P1
 	string temp = to_string(countWinP1);
 	for (int i = 0; i < 5; i++)
-		renderText(temp, 160, 385, den, _font2);
+		renderText(temp, 160, 385, colorX, _font2);
 	temp = to_string(countMoveP1);
 	for (int i = 0; i < 5; i++)
-		renderText(temp, 210, 458, den, _font2);
+		renderText(temp, 210, 458, colorX, _font2);
 
 	// UI P2
 	temp = to_string(countWinP2);
 	for (int i = 0; i < 5; i++)
-		renderText(temp, 1110, 385, den, _font2);
+		renderText(temp, 1110, 385, colorO, _font2);
 	temp = to_string(countMoveP2);
 	for (int i = 0; i < 5; i++)
-		renderText(temp, 1165, 450, den, _font2);
+		renderText(temp, 1165, 450, colorO, _font2);
 
 	// Turn
 	if(currentState == STATE_PvP)
@@ -310,35 +322,32 @@ void DrawUI() {
 
 }
 void renderPause() {
-	SDL_Color selectedColor = { 27, 4, 102, 255 }; // Xanh đậm
-	SDL_Color normalColor = { 60, 100, 223, 255 };     // Xanh Nhạt
+	SDL_Color selectedColor = { 255, 250, 205, 255 };
+	SDL_Color normalColor = { 255, 255, 255, 255 };  
 	vector<string> pauseList = { "Back", "Settings", "Help", "Menu" };
 	for (int i = 0; i < 4; i++) { 
 		if (pauseSelection == i) {
 			for(int j = 0; j < 5; j++)
-				renderText(">> " + pauseList[i] + " <<", SCREEN_WIDTH / 2, 240 + 90 * i, selectedColor, _font4);
+				renderText("* " + pauseList[i] + " *", SCREEN_WIDTH / 2 + 20, 243 + 113 * i, selectedColor, _font4);
 		}	
 		else {
 			for(int j = 0; j < 5; j++)
-				renderText(pauseList[i], SCREEN_WIDTH / 2, 240+ 90 * i, normalColor, _font4);
+				renderText(pauseList[i], SCREEN_WIDTH / 2 + 20, 240 + 115 * i, normalColor, _font4);
 		}
 	}
 }
 void renderPlay() {
-	SDL_Color title = { 10, 30, 97, 255 };
-	SDL_Color selectedColor = { 27, 4, 102, 255 }; // Xanh đậm
-	SDL_Color normalColor = { 60, 100, 223, 255 };// Xanh Nhạt
-	for(int i = 0; i < 5; i++)
-		renderRainbowText("GAMEMODE", SCREEN_WIDTH / 2, 145, _font1);
-	vector<string> playList = { "PvP", "PvE - Easy", "PvE - Hard" };
-	for (int i = 0; i < 3; i++) {
+	SDL_Color selectedColor = { 255, 250, 205, 255 };
+	SDL_Color normalColor = { 255, 255, 255, 255 };// Xanh Nhạt
+	vector<string> playList = { "PvP", "PvE - Easy", "PvE - Medium", "PvE - Hard" };
+	for (int i = 0; i < 4; i++) {
 		if (playGameSelection == i) {
 			for (int j = 0; j < 5; j++)
-				renderFloatingText(playList[i], SCREEN_WIDTH / 2 + 15, 320 + 150 * i, selectedColor, _font2);
+				renderText("* " + playList[i] + " *", SCREEN_WIDTH / 2 + 32, 242 + 115 * i, selectedColor, _font4);
 		}
 		else {
 			for(int j = 0; j < 5; j++)
-				renderText(playList[i], SCREEN_WIDTH / 2 + 15, 320 + 150 * i, normalColor, _font2);
+				renderText(playList[i], SCREEN_WIDTH / 2 + 30, 240 + 115 * i, normalColor, _font4);
 
 		}
 	}
@@ -353,27 +362,26 @@ SDL_Texture* createTextTexture(string text, SDL_Color color) {
 }
 
 void DrawNameInput() {
-	SDL_Color textColor = { 0, 0, 255, 255 }; 
+	SDL_Color textColor = { 255, 255, 255, 255 }; 
 	SDL_Color hintColor = { 100, 100, 100, 255 };
-	SDL_Color deepPurple = { 86, 65, 135 };
+	SDL_Color titleColor = { 255, 250, 205, 255 };
 	for (int i = 0; i < 5; i++)
-		renderRainbowText("Enter file name:", SCREEN_WIDTH / 2, 330);
-
-	// 4. Vẽ nội dung người dùng đang gõ
-	// Thêm dấu gạch dưới "_" nhấp nháy để tạo cảm giác đang gõ
+		renderText("Enter file name:", SCREEN_WIDTH / 2, 250, titleColor, _font2);
 	string displayString = inputText;
 	if ((SDL_GetTicks() / 500) % 2 == 0) displayString += "_";
 
 	if (inputText.length() > 0) {
-		renderText(inputText, SCREEN_WIDTH / 2, 380, textColor, _font4);
+		for(int i = 0; i < 5; i++)
+			renderText(inputText, SCREEN_WIDTH / 2, 300, textColor, _font4);
 	}
 	else {
-		renderText("_", SCREEN_WIDTH / 2, 380, deepPurple, _font4);
+		for(int i =0; i < 5; i++)
+			renderText("...", SCREEN_WIDTH / 2, 300, textColor, _font4);
 	}
 
 	// 5. Hướng dẫn
 	for(int i = 0; i < 5; i++)
-		renderText("(Enter to Confirm - Esc to Cancel)", SCREEN_WIDTH / 2, 580, hintColor, _font4);
+		renderText("(Enter to Confirm - Esc to Cancel)", SCREEN_WIDTH / 2, 450, titleColor, _font4);
 }
 
 void initSnow() {
