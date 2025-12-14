@@ -1,0 +1,459 @@
+// playerInput.cpp
+// Implementation module: nhập tên + chọn avatar (pixel style)
+
+#include "playerInput.h"
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <SDL_image.h>
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <ctime>
+
+// ---------------- Externs from project (repeated to be explicit) --------------
+extern SDL_Renderer* renderer;
+extern int SCREEN_WIDTH;
+extern int SCREEN_HEIGHT;
+
+extern int playGameSelection;
+extern int currentState;
+extern const int STATE_PvP = 100;
+extern const int STATE_PvE_easy = 101;
+extern const int STATE_PvE_hard = 102;
+
+extern void initBoard();
+extern int winner;
+extern void renderText(const std::string& text, int x, int y, SDL_Color color, TTF_Font* font);
+
+// ---------------- Module globals ----------------
+PlayerInfo player1 = { "Player 1", PlayerAvatar() };
+PlayerInfo player2 = { "Player 2", PlayerAvatar() };
+
+int nameInputStep = 0;
+string currentInputName = "";
+int maxNameLen = 12;
+
+vector<PlayerAvatar> avatarCatalog;
+int avatarCursorIndex = 0;
+
+TTF_Font* pif_fontTitle = nullptr;
+TTF_Font* pif_fontInput = nullptr;
+TTF_Font* pif_fontSmall = nullptr;
+
+vector<string> nameHistory;
+
+// ---------------- Internal helpers ----------------
+static void safeDestroyTexture(SDL_Texture*& t) {
+    if (t) { SDL_DestroyTexture(t); t = nullptr; }
+}
+
+static SDL_Texture* loadTexture(const string& path) {
+    if (path.empty()) return nullptr;
+    SDL_Surface* s = IMG_Load(path.c_str());
+    if (!s) {
+        std::cerr << "IMG_Load failed: " << path << " : " << IMG_GetError() << "\n";
+        return nullptr;
+    }
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, s);
+    SDL_FreeSurface(s);
+    return tex;
+}
+
+// Draw filled pixel circle (fallback avatar)
+static void drawFilledCircle(int cx, int cy, int r, SDL_Color c) {
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
+    for (int w = 0; w < r * 2; w++) {
+        for (int h = 0; h < r * 2; h++) {
+            int dx = r - w;
+            int dy = r - h;
+            if ((dx * dx + dy * dy) <= (r * r)) {
+                SDL_RenderDrawPoint(renderer, cx + dx, cy + dy);
+            }
+        }
+    }
+}
+
+static void renderTextCentered(const string& text, int cx, int cy, SDL_Color col, TTF_Font* font) {
+    if (!font || !renderer) return;
+    SDL_Surface* s = TTF_RenderUTF8_Blended(font, text.c_str(), col);
+    if (!s) return;
+    SDL_Texture* t = SDL_CreateTextureFromSurface(renderer, s);
+    int w = s->w, h = s->h;
+    SDL_FreeSurface(s);
+    SDL_Rect dst = { cx - w / 2, cy - h / 2, w, h };
+    SDL_RenderCopy(renderer, t, NULL, &dst);
+    SDL_DestroyTexture(t);
+}
+
+// ---------------- Resource load/free ----------------
+bool loadPlayerInputResources(const string& fontTitlePath,
+    const string& fontInputPath,
+    const string& fontSmallPath,
+    const vector<string>& avatarPaths)
+{
+    if (!TTF_WasInit()) {
+        if (TTF_Init() == -1) {
+            std::cerr << "TTF_Init error: " << TTF_GetError() << "\n";
+            return false;
+        }
+    }
+
+    pif_fontTitle = TTF_OpenFont(fontTitlePath.c_str(), 56);
+    pif_fontInput = TTF_OpenFont(fontInputPath.c_str(), 36);
+    pif_fontSmall = TTF_OpenFont(fontSmallPath.c_str(), 18);
+    if (!pif_fontTitle || !pif_fontInput || !pif_fontSmall) {
+        std::cerr << "Failed to load fonts for playerInput: " << TTF_GetError() << "\n";
+        // still continue, but rendering may fail
+    }
+
+    // IMG
+    int imgFlags = IMG_INIT_PNG | IMG_INIT_JPG;
+    if (!(IMG_Init(imgFlags) & imgFlags)) {
+        std::cerr << "IMG_Init: " << IMG_GetError() << "\n";
+    }
+
+    loadAvatarFromPaths(avatarPaths);
+
+    // seed for randomName
+    std::srand((unsigned int)time(nullptr));
+    return true;
+}
+
+void freePlayerInputResources() {
+    safeDestroyTexture(player1.avatar.texture);
+    safeDestroyTexture(player2.avatar.texture);
+
+    for (auto& a : avatarCatalog) safeDestroyTexture(a.texture);
+    avatarCatalog.clear();
+
+    if (pif_fontTitle) { TTF_CloseFont(pif_fontTitle); pif_fontTitle = nullptr; }
+    if (pif_fontInput) { TTF_CloseFont(pif_fontInput); pif_fontInput = nullptr; }
+    if (pif_fontSmall) { TTF_CloseFont(pif_fontSmall); pif_fontSmall = nullptr; }
+
+    IMG_Quit();
+    TTF_Quit();
+}
+
+// ---------------- Avatar catalog ----------------
+void loadAvatarFromPaths(const vector<string>& avatarPaths) {
+    freeAvatarCatalog();
+    for (size_t i = 0; i < avatarPaths.size(); ++i) {
+        PlayerAvatar pa;
+        pa.texture = loadTexture(avatarPaths[i]);
+        pa.id = avatarPaths[i];
+        pa.idx = (int)i;
+        avatarCatalog.push_back(pa);
+    }
+}
+
+void freeAvatarCatalog() {
+    for (auto& a : avatarCatalog) safeDestroyTexture(a.texture);
+    avatarCatalog.clear();
+}
+
+// ---------------- Name history ----------------
+bool saveNameHistoryToFile(const string& path) {
+    std::ofstream ofs(path);
+    if (!ofs.is_open()) return false;
+    for (auto& s : nameHistory) ofs << s << "\n";
+    ofs.close();
+    return true;
+}
+
+bool loadNameHistoryFromFile(const string& path) {
+    std::ifstream ifs(path);
+    if (!ifs.is_open()) return false;
+    nameHistory.clear();
+    string line;
+    while (std::getline(ifs, line)) if (!line.empty()) nameHistory.push_back(line);
+    ifs.close();
+    return true;
+}
+
+// ---------------- small helpers ----------------
+static string randomFunnyName() {
+    static const char* sample[] = {
+        "Ngoc", "Linh", "Dũng", "Minh", "Noob", "Pro", "Ace", "Star", "Zed", "Neo"
+    };
+    int n = sizeof(sample) / sizeof(sample[0]);
+    return string(sample[std::rand() % n]);
+}
+
+static bool isDuplicateLocal(const string& name) {
+    if (name.empty()) return false;
+    if (player1.name == name) return true;
+    if (player2.name == name) return true;
+    for (auto& s : nameHistory) if (s == name) return true;
+    return false;
+}
+
+void addNameToHistory(const string& name) {
+    if (name.empty()) return;
+    if (std::find(nameHistory.begin(), nameHistory.end(), name) == nameHistory.end())
+        nameHistory.push_back(name);
+}
+
+// ---------------- control start/stop input ----------------
+void startNameInput() { SDL_StartTextInput(); }
+void stopNameInput() { SDL_StopTextInput(); }
+
+void resetNameInput() {
+    nameInputStep = 0;
+    currentInputName.clear();
+    player1.name = "Player 1";
+    player2.name = "Player 2";
+    player1.avatar = PlayerAvatar();
+    player2.avatar = PlayerAvatar();
+    avatarCursorIndex = 0;
+}
+
+// set programmatically
+void setPlayerNames(const string& p1, const string& p2) {
+    player1.name = p1;
+    player2.name = p2;
+}
+
+// ---------------- Render small pixel-style input UI ----------------
+void renderPlayerNameInput() {
+    if (!renderer) return;
+
+    // overlay darken
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 160);
+    SDL_Rect overlay = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
+    SDL_RenderFillRect(renderer, &overlay);
+
+    // Title
+    SDL_Color titleCol = { 250, 245, 220, 255 }; // cream
+    renderTextCentered("ENTER PLAYER NAME", SCREEN_WIDTH / 2, 120, titleCol, pif_fontTitle);
+
+    // Input box - keep style like board frame: pale yellow box with purple border
+    int boxW = SCREEN_WIDTH * 2 / 3;
+    int boxH = 110;
+    int boxX = (SCREEN_WIDTH - boxW) / 2;
+    int boxY = 160;
+
+    // background pale yellow
+    SDL_SetRenderDrawColor(renderer, 255, 250, 220, 255);
+    SDL_Rect brect = { boxX, boxY, boxW, boxH };
+    SDL_RenderFillRect(renderer, &brect);
+
+    // purple border (pixel style: 3px)
+    SDL_SetRenderDrawColor(renderer, 150, 130, 200, 255);
+    for (int i = 0; i < 3; i++) {
+        SDL_Rect r = { boxX - i, boxY - i, boxW + i * 2, boxH + i * 2 };
+        SDL_RenderDrawRect(renderer, &r);
+    }
+
+    // If in nameInputStep 0 or 1 show currentInputName with blinking cursor
+    int centerY = boxY + boxH / 2;
+    string display = currentInputName;
+    // cursor blink every 500ms
+    if ((SDL_GetTicks() / 500) % 2 == 0) display += "|";
+
+    SDL_Color textCol = { 60, 120, 180, 255 }; // blue-ish pixel
+    if (!currentInputName.empty())
+        renderTextCentered(display, SCREEN_WIDTH / 2, centerY, textCol, pif_fontInput);
+    else
+        renderTextCentered("Enter name...", SCREEN_WIDTH / 2, centerY, SDL_Color{ 140,140,160,200 }, pif_fontSmall);
+
+    // instructions
+    renderTextCentered("ENTER - Confirm    ESC - Skip    TAB - Random name", SCREEN_WIDTH / 2, boxY + boxH + 36, SDL_Color{ 220,220,220,200 }, pif_fontSmall);
+
+    // If step indicates avatar selection, render avatar area below
+    if (nameInputStep >= 2) {
+        // avatar grid
+        renderTextCentered("CHOOSE AVATAR", SCREEN_WIDTH / 2, boxY + boxH + 96, titleCol, pif_fontSmall);
+
+        int avatarY = boxY + boxH + 140;
+        int perW = 96; // spacing
+        int count = (int)avatarCatalog.size();
+        int totalW = perW * count;
+        int startX = SCREEN_WIDTH / 2 - totalW / 2 + perW / 2;
+
+        for (int i = 0; i < count; i++) {
+            int cx = startX + i * perW;
+            int cy = avatarY;
+            int size = 64;
+            SDL_Rect dst = { cx - size / 2, cy - size / 2, size, size };
+
+            // background box
+            SDL_SetRenderDrawColor(renderer, 44, 56, 86, 255);
+            SDL_Rect box = { dst.x - 6, dst.y - 6, dst.w + 12, dst.h + 12 };
+            SDL_RenderFillRect(renderer, &box);
+
+            // border (light)
+            SDL_SetRenderDrawColor(renderer, 140, 150, 200, 255);
+            SDL_Rect b = { dst.x - 6, dst.y - 6, dst.w + 12, dst.h + 12 };
+            SDL_RenderDrawRect(renderer, &b);
+
+            // render avatar texture or placeholder
+            if (avatarCatalog[i].texture) {
+                SDL_RenderCopy(renderer, avatarCatalog[i].texture, NULL, &dst);
+            }
+            else {
+                drawFilledCircle(cx, cy, size / 2 - 4, SDL_Color{ 200,180,100,255 });
+            }
+
+            // selection highlight (pixel blink)
+            if (i == avatarCursorIndex) {
+                // blinking 0..1
+                int blink = (SDL_GetTicks() / 300) % 2;
+                SDL_SetRenderDrawColor(renderer, blink ? 200 : 150, blink ? 120 : 100, blink ? 220 : 180, 255);
+                SDL_Rect sel = { dst.x - 8, dst.y - 8, dst.w + 16, dst.h + 16 };
+                SDL_RenderDrawRect(renderer, &sel);
+            }
+        }
+
+        renderTextCentered("← → Move    ENTER - Select", SCREEN_WIDTH / 2, avatarY + 80, SDL_Color{ 220,220,220,200 }, pif_fontSmall);
+    }
+}
+
+// ---------------- Event handling ----------------
+void handleNameInputEvent(SDL_Event& e) {
+    if (nameInputStep < 2) {
+        // name typing mode (step 0 = P1, step 1 = P2)
+        if (e.type == SDL_TEXTINPUT) {
+            if ((int)currentInputName.length() < maxNameLen) {
+                currentInputName += e.text.text;
+                // small shake effect can be handled in render by using time-based offset (not implemented as variable)
+            }
+        }
+        else if (e.type == SDL_KEYDOWN) {
+            if (e.key.keysym.sym == SDLK_BACKSPACE) {
+                if (!currentInputName.empty()) currentInputName.pop_back();
+            }
+            else if (e.key.keysym.sym == SDLK_TAB) {
+                // random name
+                currentInputName = randomFunnyName();
+            }
+            else if (e.key.keysym.sym == SDLK_ESCAPE) {
+                SDL_StopTextInput();
+                if (nameInputStep == 0) {
+                    // skip P1 -> if PvP go to P2, else set bots
+                    player1.name = "Player 1";
+                    if (playGameSelection == 0) {
+                        nameInputStep = 1;
+                        currentInputName.clear();
+                        SDL_StartTextInput();
+                    }
+                    else {
+                        player2.name = (playGameSelection == 1 ? "Bot (Easy)" : "Bot (Hard)");
+                        currentState = (playGameSelection == 1 ? STATE_PvE_easy : STATE_PvE_hard);
+                        initBoard();
+                        winner = 0;
+                        resetNameInput();
+                    }
+                }
+                else if (nameInputStep == 1) {
+                    player2.name = "Player 2";
+                    currentState = STATE_PvP;
+                    initBoard();
+                    winner = 0;
+                    resetNameInput();
+                }
+            }
+            else if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_KP_ENTER) {
+                if (nameInputStep == 0) {
+                    if (!currentInputName.empty()) player1.name = currentInputName;
+                    else player1.name = randomFunnyName();
+
+                    if (isDuplicateLocal(player1.name)) player1.name += std::to_string(std::rand() % 90 + 10);
+                    addNameToHistory(player1.name);
+
+                    if (playGameSelection == 0) {
+                        nameInputStep = 1;
+                        currentInputName.clear();
+                        SDL_StartTextInput();
+                    }
+                    else {
+                        // PvE -> set bot and start
+                        player2.name = (playGameSelection == 1 ? "Bot (Easy)" : "Bot (Hard)");
+                        currentState = (playGameSelection == 1 ? STATE_PvE_easy : STATE_PvE_hard);
+                        initBoard();
+                        winner = 0;
+                        resetNameInput();
+                    }
+                }
+                else if (nameInputStep == 1) {
+                    if (!currentInputName.empty()) player2.name = currentInputName;
+                    else player2.name = randomFunnyName();
+
+                    if (isDuplicateLocal(player2.name)) player2.name += std::to_string(std::rand() % 90 + 10);
+                    addNameToHistory(player2.name);
+
+                    // go to avatar selection for both players
+                    nameInputStep = 2; // start avatar select for player1
+                    avatarCursorIndex = 0;
+                }
+            }
+        }
+    }
+    else {
+        // avatar selection steps: 2 = choose avatar for P1, 3 = choose avatar for P2
+        if (e.type == SDL_KEYDOWN) {
+            if (e.key.keysym.sym == SDLK_LEFT) {
+                if (!avatarCatalog.empty()) {
+                    avatarCursorIndex = (avatarCursorIndex - 1 + (int)avatarCatalog.size()) % (int)avatarCatalog.size();
+                }
+            }
+            else if (e.key.keysym.sym == SDLK_RIGHT) {
+                if (!avatarCatalog.empty()) {
+                    avatarCursorIndex = (avatarCursorIndex + 1) % (int)avatarCatalog.size();
+                }
+            }
+            else if (e.key.keysym.sym == SDLK_ESCAPE) {
+                // cancel avatar selection: go back to previous name step
+                if (nameInputStep == 2) {
+                    nameInputStep = 1;
+                    currentInputName = player2.name;
+                    SDL_StartTextInput();
+                }
+                else if (nameInputStep == 3) {
+                    nameInputStep = 1;
+                    SDL_StartTextInput();
+                }
+            }
+            else if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_KP_ENTER) {
+                // select current avatar
+                if (!avatarCatalog.empty()) {
+                    if (nameInputStep == 2) {
+                        player1.avatar = avatarCatalog[avatarCursorIndex];
+                        // animate moving avatar to left panel (simple immediate assign)
+                        // proceed to player2 avatar selection (if PvP) or finish
+                        if (playGameSelection == 0) {
+                            nameInputStep = 3;
+                            avatarCursorIndex = 0;
+                        }
+                        else {
+                            // PvE: set bot avatar random
+                            if (!avatarCatalog.empty()) {
+                                int idx = std::rand() % (int)avatarCatalog.size();
+                                player2.avatar = avatarCatalog[idx];
+                            }
+                            // start game PvE
+                            if (playGameSelection == 1) currentState = STATE_PvE_easy;
+                            else currentState = STATE_PvE_hard;
+                            initBoard();
+                            winner = 0;
+                            resetNameInput();
+                        }
+                    }
+                    else if (nameInputStep == 3) {
+                        player2.avatar = avatarCatalog[avatarCursorIndex];
+                        // both chosen -> start PvP
+                        currentState = STATE_PvP;
+                        initBoard();
+                        winner = 0;
+                        resetNameInput();
+                    }
+                }
+            }
+            else if (e.key.keysym.sym == SDLK_TAB) {
+                // random avatar
+                if (!avatarCatalog.empty()) avatarCursorIndex = std::rand() % (int)avatarCatalog.size();
+            }
+        }
+    }
+}
