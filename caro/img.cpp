@@ -69,9 +69,7 @@ void DrawBackGround() {
 void renderWinEffect(int winner) {
 	// 1. LÀM TỐI NỀN (Dim Background)
 	// Giúp chữ nổi bật hơn trên bàn cờ
-	if (ClickSound != NULL && cSound == true) {
-		Mix_PlayChannel(-1, WinSound, 0);
-	}
+
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 150); // Màu đen mờ (Alpha 150)
 	SDL_Rect fullScreen = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };

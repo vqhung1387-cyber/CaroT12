@@ -178,7 +178,7 @@ void updateTimer() {
 	if (currentState == STATE_PvP && !isPause) {
 		Uint32 currentTime = SDL_GetTicks();
 
-		if (currentTime - lastTime >= 1000) {
+		if (currentTime - lastTime >= 1000 && winner==0) {
 			turnTime--;
 			lastTime = currentTime;
 			

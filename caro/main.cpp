@@ -637,6 +637,7 @@ int main(int argc, char* args[]) {
 		}
 		DrawBackGround();
 
+		//Vẽ nền, chữ
 		if (currentState == STATE_MENU) {
 			DrawMenu();
 			renderSnowEffect();

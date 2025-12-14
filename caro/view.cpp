@@ -121,14 +121,14 @@ void renderAbout() {
 	SDL_Color titleColor = { 255, 250, 205, 255 };
 	for (int i = 0; i < 5; i++) {
 		renderText("- VNUHCM - University of Science -", SCREEN_WIDTH / 2 + 10,200, titleColor, _font4);
-		renderText("Class: 25C10", SCREEN_WIDTH / 2 - 123, 250, textColor, _font3);
-		renderText("Mentor: Truong Toan Thinh", SCREEN_WIDTH / 2 - 51, 280, textColor, _font3);
-		renderText("Created by: Group 11", SCREEN_WIDTH / 2 - 77, 310, textColor, _font3);
+		renderText("Class: 25C10", SCREEN_WIDTH / 2 - 153, 250, textColor, _font3);
+		renderText("Mentor: Truong Toan Thinh", SCREEN_WIDTH / 2 - 43, 280, textColor, _font3);
+		renderText("Created by: Group 11", SCREEN_WIDTH / 2 - 81, 310, textColor, _font3);
 		renderText("25127055 - Vuong Quoc Hung", SCREEN_WIDTH / 2 - 20, 340, textColor, _font3);
 		renderText("25127132 - Bui Huu Tan Tai", SCREEN_WIDTH / 2 - 31, 370, textColor, _font3);
-		renderText("25127215 - Lam Yen Ngoc", SCREEN_WIDTH / 2 - 47, 400, textColor, _font3);
-		renderText("25127386 - Tran Nguyen Anh Khoa", SCREEN_WIDTH / 2 + 22, 430, textColor, _font3);
-		renderText("25127507 - Nguyen Quoc Thinh", SCREEN_WIDTH / 2 - 9, 460, textColor,_font3);
+		renderText("25127215 - Lam Yen Ngoc", SCREEN_WIDTH / 2 - 47, 410, textColor, _font3);
+		renderText("25127386 - Tran Nguyen Anh Khoa", SCREEN_WIDTH / 2 + 22, 440, textColor, _font3);
+		renderText("25127507 - Nguyen Quoc Thinh", SCREEN_WIDTH / 2 - 9, 470, textColor,_font3);
 	}
 }
 void renderHelp() {
@@ -221,7 +221,7 @@ void renderLoad() {
 void renderHello() {
 	SDL_Color tcolor = { 0,0,0,255 };
 	for (int i = 0; i < 5; i++)
-		renderFloatingText("Press any keys to continue!", SCREEN_WIDTH / 2, 570, tcolor, _font4);
+		renderFloatingText("Press any keys to continue!", SCREEN_WIDTH / 2, 555, tcolor, _font4);
 	renderScrollingText("Helloooooo !!!!!!!!!!!", 50, tcolor);
 }
 void DrawXO() {
