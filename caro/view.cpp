@@ -164,10 +164,10 @@ void renderSetting() {
 	for (int i = 0; i < 5; i++) {
 		if (settingSelection == 0) {
 			if (mainMusic) {
-				renderText("Music: ON", SCREEN_WIDTH / 2 - 30, 310, selectedColor, _font4);
+				renderText("Music: ON", SCREEN_WIDTH / 2 - 32, 312, selectedColor, _font4);
 			}
 			else
-				renderText("Music: OFF", SCREEN_WIDTH / 2 - 35, 310, selectedColor, _font4);
+				renderText("Music: OFF", SCREEN_WIDTH / 2 - 32, 312, selectedColor, _font4);
 		}
 		else {
 			if (mainMusic) {
@@ -178,9 +178,9 @@ void renderSetting() {
 		}
 		if (settingSelection == 1) {
 			if (cSound)
-				renderText("SFX: ON", SCREEN_WIDTH / 2 - 40, 340, selectedColor, _font4);
+				renderText("SFX: ON", SCREEN_WIDTH / 2 - 42, 342, selectedColor, _font4);
 			else
-				renderText("SFX: OFF", SCREEN_WIDTH / 2 - 45, 340, selectedColor, _font4);
+				renderText("SFX: OFF", SCREEN_WIDTH / 2 - 42, 342, selectedColor, _font4);
 		}
 		else {
 			if (cSound)
@@ -190,9 +190,9 @@ void renderSetting() {
 		}
 		if (settingSelection == 2) {
 			if(effects)
-				renderText("Effects: ON", SCREEN_WIDTH / 2 - 50, 370, selectedColor, _font4);
+				renderText("Effects: ON", SCREEN_WIDTH / 2 - 52, 372, selectedColor, _font4);
 			else
-				renderText("Effects: OFF", SCREEN_WIDTH / 2 - 50, 370, selectedColor, _font4);	
+				renderText("Effects: OFF", SCREEN_WIDTH / 2 - 52, 372, selectedColor, _font4);	
 		}
 		else {
 			if (effects)
@@ -200,8 +200,9 @@ void renderSetting() {
 			else
 				renderText("Effects: OFF", SCREEN_WIDTH / 2 - 50, 370, textColor, _font4);
 		}
-		
 	}
+	for(int i = 0; i < 5; i++)
+		renderText("  PRESS ESC/SPACE/ENTER TO EXIT  ", SCREEN_WIDTH / 2, 480, selectedColor, _font3);
 }
 
 void renderLoad() {
@@ -209,27 +210,19 @@ void renderLoad() {
 	SDL_Color titleColor = { 255, 250, 205, 255 };
 	if (saveFiles.empty()) {
 		for(int i = 0; i < 5; i++)
+		{
+			renderText("List of saves: ", SCREEN_WIDTH / 2, 200, titleColor, _font4);
 			renderText("No save files found!", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, titleColor, _font3);
+		}
 	}
 	else {
 		for(int i = 0; i < 5; i++)
 			renderText("List of saves: ", SCREEN_WIDTH / 2, 200, titleColor, _font4);
-		int startY = 250;
+		
 		for (int i = 0; i < saveFiles.size(); i++) {
-			SDL_Color color;
-			string textToShow;
-
-			if (i == loadSelection) {
-				color = titleColor;
-				textToShow = "* " + saveFiles[i] + " *";
-				for (int j = 0; j < 5; j++)
-					renderText(textToShow, SCREEN_WIDTH / 2 + 2, startY + 2 + (i * 50), color, _font3);
-			}
-			else {
-				color = textColor;
-				textToShow = saveFiles[i];
-				for (int j = 0; j < 5; j++)
-					renderText(textToShow, SCREEN_WIDTH / 2, startY + (i * 50), color, _font3);
+			if (loadSelection == i) {
+				for(int j = 0; j < 5; j++)
+					renderText("* " + saveFiles[i] + " *", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, titleColor, _font2);
 			}
 		}
 	}
