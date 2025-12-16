@@ -29,6 +29,7 @@ void renderText(string text, int x, int y, SDL_Color color) {
 	SDL_DestroyTexture(textTexture);
 	SDL_FreeSurface(textSurface);
 }
+
 void renderText(string text, int x, int y, SDL_Color color, TTF_Font* font) {
 	if (font == NULL) return;
 
@@ -52,6 +53,7 @@ void renderText(string text, int x, int y, SDL_Color color, TTF_Font* font) {
 	SDL_DestroyTexture(textTexture);
 	SDL_FreeSurface(textSurface);
 }
+
 void renderText(string text, int x, int y, SDL_Color color, TTF_Font* font, float scale) {
 	// 1. Kiểm tra an toàn: Nếu font chưa load hoặc chuỗi rỗng thì không làm gì cả
 	if (font == NULL || text.empty()) return;
@@ -86,6 +88,7 @@ void renderText(string text, int x, int y, SDL_Color color, TTF_Font* font, floa
 	SDL_DestroyTexture(textTexture);
 	SDL_FreeSurface(textSurface);
 }
+
 void DrawBoard() {
 	SDL_SetRenderDrawColor(renderer, 139, 69, 19, 255);
 		// Vẽ đường dọc
@@ -97,6 +100,7 @@ void DrawBoard() {
 		SDL_RenderDrawLine(renderer, LEFT, TOP + j * CELLSIZE, LEFT + CELLSIZE * BOARD_SIZE, TOP + j * CELLSIZE);
 	}
 }
+
 void DrawMenu() {
 	for (int i = 0; i < 5; i++) {
 		renderRainbowText("MERRY CHRISTMAS!", SCREEN_WIDTH / 2, 150);
@@ -116,6 +120,7 @@ void DrawMenu() {
 		}
 	}
 }
+
 void renderAbout() {
 	SDL_Color textColor = { 255, 255, 255, 255 };
 	SDL_Color titleColor = { 255, 250, 205, 255 };
@@ -132,6 +137,7 @@ void renderAbout() {
 		renderText("  PRESS ESC/SPACE/ENTER TO EXIT  ", SCREEN_WIDTH / 2, 500, titleColor, _font3);
 	}
 }
+
 void renderHelp() {
 	SDL_Color textColor = { 255, 255, 255, 255 };
 	SDL_Color titleColor = { 255, 250, 205, 255 };
@@ -197,11 +203,13 @@ void renderSetting() {
 		
 	}
 }
+
 void renderLoad() {
 	SDL_Color textColor = { 255, 255, 255, 255 };
 	SDL_Color titleColor = { 255, 250, 205, 255 };
 	if (saveFiles.empty()) {
-		renderText("No save files found!", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, titleColor, _font3);
+		for(int i = 0; i < 5; i++)
+			renderText("No save files found!", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, titleColor, _font3);
 	}
 	else {
 		for(int i = 0; i < 5; i++)
@@ -225,16 +233,19 @@ void renderLoad() {
 			}
 		}
 	}
-
-	// 4. Hướng dẫn
 	for(int i = 0; i < 5; i++)
-		renderText("UP/DOWN: Select, ENTER: Load, ESC: Back", SCREEN_WIDTH / 2, 480, titleColor, _font3);
+	{
+		renderText("UP/DOWN: Select, ENTER: Load.", SCREEN_WIDTH / 2, 480, titleColor, _font3);
+		renderText("DELETE: Del, ESC: Back", SCREEN_WIDTH / 2, 510, titleColor, _font3);
+	}
 }
+
 void renderHello() {
 	SDL_Color tcolor = {255,255,255,255 };
 	for (int i = 0; i < 5; i++)
 		renderFloatingText("Press any keys to continue!", SCREEN_WIDTH / 2, 555, tcolor, _font4);
 }
+
 void DrawXO() {
 	SDL_Color colorX = { 255, 69, 69, 255 };
 	SDL_Color colorO = { 50, 205, 50, 255 };
@@ -279,6 +290,7 @@ void DrawXO() {
 		SDL_RenderDrawRect(renderer, &innerRect);
 	}
 }
+
 void DrawUI() {
 	SDL_Color colorX = { 255, 69, 69, 255 };
 	SDL_Color colorO = { 50, 205, 50, 255 };
@@ -321,6 +333,7 @@ void DrawUI() {
 	}
 
 }
+
 void renderPause() {
 	SDL_Color selectedColor = { 255, 250, 205, 255 };
 	SDL_Color normalColor = { 255, 255, 255, 255 };  
@@ -336,6 +349,7 @@ void renderPause() {
 		}
 	}
 }
+
 void renderPlay() {
 	SDL_Color selectedColor = { 255, 250, 205, 255 };
 	SDL_Color normalColor = { 255, 255, 255, 255 };// Xanh Nhạt
@@ -352,6 +366,7 @@ void renderPlay() {
 		}
 	}
 }
+
 SDL_Texture* createTextTexture(string text, SDL_Color color) {
 	if (_font1 == NULL) return NULL;
 	SDL_Surface* surf = TTF_RenderText_Solid(_font1, text.c_str(), color);
