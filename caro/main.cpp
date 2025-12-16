@@ -401,6 +401,22 @@ int main(int argc, char* args[]) {
 						else {
 							currentState = STATE_MENU;
 						}
+						break;
+					case SDLK_DELETE:
+						if (!saveFiles.empty()) {
+							
+							string fileToDelete = saveFiles[loadSelection];
+
+							deletePFile(fileToDelete);
+
+							scanSaveFiles();
+
+							if (loadSelection >= saveFiles.size()) {
+								loadSelection = saveFiles.size() - 1;
+							}
+							if (loadSelection < 0) loadSelection = 0;
+						}
+						break;
 					}
 				}
 				// TH5: HELP
@@ -678,8 +694,7 @@ int main(int argc, char* args[]) {
 		else if (currentState == STATE_ABOUT) {
 			renderAbout();
 		}
-		else if (currentState == STATE_HELP) {
-			renderSnowEffect();
+		else if (currentState == STATE_HELP) {	
 			renderHelp();
 		}
 		else if (currentState == STATE_SETTING) {
