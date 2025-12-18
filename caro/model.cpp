@@ -127,7 +127,7 @@ bool checkDraw() {
 }
 
 void SaveGame(string filename) {
-	string fullPath = filename + ".txt";
+	string fullPath = "saves/" + filename + ".txt";
 	ofstream file(fullPath);
 	if (file.is_open()) {
 		file << playGameSelection << endl;
@@ -143,11 +143,11 @@ void SaveGame(string filename) {
 		}
 		file.close();
 	}
-	cout << "Da luu file: " << fullPath << endl;
+	// cout << "Da luu file: " << fullPath << endl;
 }
 
 bool LoadGame(string filename) {
-	string fullPath = filename + ".txt";
+	string fullPath = "saves/" + filename + ".txt";
 	ifstream file(fullPath);
 	if (file.is_open()) {
 		int saveMode = -1;
@@ -201,15 +201,16 @@ void scanSaveFiles() {
 	saveFiles.clear();
 	loadSelection = 0;
 
-	for (const auto& entry : filesystem::directory_iterator(".")) {
+	for (const auto& entry : filesystem::directory_iterator("saves.")) {
 		if (entry.path().extension() == ".txt") {
 			saveFiles.push_back(entry.path().stem().string());
+			cout<<saveFiles.back()<<endl;
 		}
 	}
 }
 
 void deletePFile(string filename) {
-	string fullPath = filename + ".txt";
+	string fullPath = "saves/"+ filename + ".txt";
 
 	try {
 		if (filesystem::exists(fullPath)) {
@@ -221,4 +222,3 @@ void deletePFile(string filename) {
 		cout << "Loi xoa file: " << err.what() << endl;
 	}
 }
-
