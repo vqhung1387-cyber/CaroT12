@@ -66,6 +66,7 @@ void DrawBackGround() {
 	}
 }
 // Effects
+
 void renderWinEffect(int winner) {
 	// 1. LÀM TỐI NỀN (Dim Background)
 	// Giúp chữ nổi bật hơn trên bàn cờ
@@ -130,6 +131,7 @@ void renderWinEffect(int winner) {
 		renderText("Press Y to Replay - N to Menu", SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 100, hintColor, _font4, 1.0f);
 	}
 }
+
 void renderFloatingText(string text, int x, int y, SDL_Color color, TTF_Font* font) {
 
 	double time = SDL_GetTicks() / 1000.0;
@@ -138,6 +140,7 @@ void renderFloatingText(string text, int x, int y, SDL_Color color, TTF_Font* fo
 
 	renderText(text, x, y + offset, color, font);
 }
+
 void renderRainbowText(string text, int x, int y) {
 	// Hiệu ứng sáng tối nhẹ nhàng (Breathing)
 	double time = SDL_GetTicks() / 800.0;
@@ -149,6 +152,7 @@ void renderRainbowText(string text, int x, int y) {
 	// Vẽ chữ (Dùng font nhỏ _font2 hoặc _font3)
 	renderText(text, x, y, goldColor, _font2);
 }
+
 void renderRainbowText(string text, int x, int y, TTF_Font* font) {
 	double time = SDL_GetTicks() / 500.0;
 
@@ -162,6 +166,7 @@ void renderRainbowText(string text, int x, int y, TTF_Font* font) {
 
 	renderText(text, x, y, frozenColor, _font2);
 }
+
 void renderScrollingText(string text, int y, SDL_Color color) {
 	// Mỗi khung hình trừ đi 2 pixel (Tốc độ chạy)
 	scrollX -= 1;
@@ -174,6 +179,7 @@ void renderScrollingText(string text, int y, SDL_Color color) {
 
 	renderText(text, scrollX, y, color, _font4);
 }
+
 void renderTextWithShadow(string text, int x, int y, SDL_Color mainColor, TTF_Font* font) {
 	// 1. Vẽ bóng màu xám đậm (lệch xuống dưới bên phải 2px)
 	SDL_Color shadowColor = { 50, 50, 50, 100 }; // Xám
@@ -182,7 +188,7 @@ void renderTextWithShadow(string text, int x, int y, SDL_Color mainColor, TTF_Fo
 	// 2. Vẽ chữ chính đè lên
 	renderText(text, x, y, mainColor, font);
 }
-	// Hiệu ứng nhịp tim.
+
 void renderPulsingText(string text, int x, int y, SDL_Color color) {
 	// Lấy thời gian để tạo nhịp
 	double time = SDL_GetTicks() / 500.0; // Chia 500 để nhịp chậm vừa phải
@@ -194,7 +200,7 @@ void renderPulsingText(string text, int x, int y, SDL_Color color) {
 	// Gọi hàm renderText có scale
 	// renderText(text, x, y, color, scale, _font3);
 }
-	// Hiệu ứng nhiễu sóng.
+
 void renderGlitchText(string text, int x, int y, TTF_Font* font) {
 	// Tạo hiệu ứng nảy nhẹ theo nhịp
 	double time = SDL_GetTicks() / 500.0;
@@ -208,7 +214,7 @@ void renderGlitchText(string text, int x, int y, TTF_Font* font) {
 	SDL_Color santaRed = { 255, 255, 255, 255 };
 	renderText(text, x, y + offsetY, santaRed, font);
 }
-	// Hiệu ứng rung lắc.
+
 void renderShakingText(string text, int x, int y, SDL_Color color, TTF_Font* font) {
 	// Cường độ rung (Intensity)
 	int intensity = 4;

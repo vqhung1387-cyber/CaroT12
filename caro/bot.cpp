@@ -305,7 +305,7 @@ void PVE_VeryHard_Move() {
             if (GameBoard[r][c] == 0 && vh_hasNeighbor(r, c)) {
                 GameBoard[r][c] = 2;
                 
-                int val = vh_minimax(4, false, -VH_INF, VH_INF); 
+                int val = vh_minimax(2, false, -VH_INF, VH_INF); 
                 
                 val += (BOARD_SIZE - (abs(r - mid) + abs(c - mid)));
 
