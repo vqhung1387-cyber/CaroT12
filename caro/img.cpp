@@ -65,7 +65,6 @@ void DrawBackGround() {
 		SDL_RenderCopy(renderer, currentBg, NULL, NULL);
 	}
 }
-
 // Effects
 
 void renderWinEffect(int winner) {
